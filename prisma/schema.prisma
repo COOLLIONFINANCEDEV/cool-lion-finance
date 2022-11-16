@@ -17,28 +17,29 @@ generator client {
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
 model users {
-  id         Int      @id @default(autoincrement())
-  first_name String
-  last_name  String
-  email      String   @unique
-  contact    String   @unique @default("")
-  password   String   @db.Text
-  salt       String   @db.Text
-  desable    Boolean  @default(true) // user account is desable
-  two_fa     Boolean  @default(true) // user subscribe to 2fa
-  is_deleted Boolean  @default(false)
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt // @default(now())
+  id               Int      @id @default(autoincrement())
+  first_name       String   @default("Undefined")
+  last_name        String   @default("Undefined")
+  email            String   @unique
+  contact          String   @unique @default("Undefined")
+  password         String   @db.Text
+  salt             String   @db.Text
+  contact_verified Boolean  @default(false)
+  desable          Boolean  @default(true) // user account is desable
+  two_fa           Boolean  @default(false) // user subscribe to 2fa
+  is_deleted       Boolean  @default(false)
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt // @default(now())
 
-  user_docs   users_docs[]
-  role_id     Int
-  role        role         @relation(fields: [role_id], references: [id])
-  two_fa_code two_fa_code?
-  companies   company[]
-  wallet      wallet?
+  user_docs users_docs[]
+  role_id   Int?
+  role      role?        @relation(fields: [role_id], references: [id])
+  companies company[]
+  wallet    wallet?
 
   @@map("users")
 }
@@ -59,23 +60,23 @@ model users_docs {
 
 model role {
   id          Int      @id @default(autoincrement())
-  name        String
+  name        String   @unique
   description String
-  is_deleted Boolean  @default(false)
+  is_deleted  Boolean  @default(false)
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt // @default(now())
 
   role_ permissions[]
-  users  users[]
+  users users[]
 
   @@map("role")
 }
 
 model permissions {
   id          Int      @id @default(autoincrement())
-  name        String
+  name        String   @unique
   description String
-  is_deleted Boolean  @default(false)
+  is_deleted  Boolean  @default(false)
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt // @default(now())
 
@@ -84,29 +85,16 @@ model permissions {
   @@map("permissions")
 }
 
-model two_fa_code {
-  id         Int      @id @default(autoincrement())
-  value      String
-  is_deleted Boolean  @default(false)
-  created_at DateTime
-  updated_at DateTime @updatedAt // @default(now())
-
-  user_id Int   @unique
-  user    users @relation(fields: [user_id], references: [id])
-
-  @@map("two_fa_code")
-}
-
 model company {
   id          Int      @id @default(autoincrement())
   name        String
-  description String   @db.Text
-  logo        String // lien ou chaine base64, si chaine base64 alors ajouter @db.Text ou n@db.Blob
-  country     String
-  city        String
+  description String   @default("") @db.Text
+  logo        String   @default("") // lien ou chaine base64, si chaine base64 alors ajouter @db.Text ou n@db.Blob
+  country     String   @default("")
+  city        String   @default("")
   phone       String
   email       String
-  is_deleted Boolean  @default(false)
+  is_deleted  Boolean  @default(false)
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt // @default(now())
 
@@ -114,6 +102,10 @@ model company {
   manager    users   @relation(fields: [manager_id], references: [id])
   offers     offer[]
 
+  @@unique([name, phone])
+  @@unique([name, email])
+  @@unique([name, city])
+  @@unique([name, country])
   @@map("company")
 }
 
@@ -136,7 +128,7 @@ model offer {
   id                        Int      @id @default(autoincrement())
   name                      String
   description               String   @db.Text
-  image                     String //
+  image                     String   @default("")
   total_investment_to_raise Float
   price_per_unit            Float
   number_of_unit            Float
@@ -145,9 +137,9 @@ model offer {
   investment_term           DateTime @db.Timestamp() // le temps mis pour le remboursement en Jours
   distribution_frequency    Int // la frequence de remboursement en Jours
   start_payment             DateTime @db.Date
-  expected_return           Float
-  status                    String
-  is_deleted Boolean  @default(false)
+  expected_return           Float    @default(0.0)
+  status                    String   @default("")
+  is_deleted                Boolean  @default(false)
   created_at                DateTime @default(now())
   updated_at                DateTime @updatedAt // @default(now())
 
@@ -201,7 +193,7 @@ model transaction {
   wallet_id Int
   wallet    wallet? @relation(fields: [wallet_id], references: [id])
 
-  @@map("transactions")
+  @@map("transaction")
 }
 
 model offer_repayment_plan {
@@ -210,12 +202,12 @@ model offer_repayment_plan {
   expected_amount Float
   received_amount Float
   status          String
-  is_deleted Boolean  @default(false)
-  created_at      DateTime
-  updated_at      DateTime
+  is_deleted      Boolean  @default(false)
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt // @default(now())
 
   offer_id Int
   offer    offer? @relation(fields: [offer_id], references: [id])
 
-  @@map("offer_repayment_plans")
+  @@map("offer_repayment_plan")
 }

@@ -27,6 +27,12 @@ export const twilioConfig = {
     AUTH_TOKEN: "c14a0b98a503ae708d0bb288d8bc2cac",
 }
 
+export const cinetpayConfig = {
+    API_KEY : "14047243215ebd680ed0d0c0.07903569",
+    SITE_ID: '622120',
+    NOTIFY_URL: '',
+    PASSWORD:'Developpeur1010!'
+}
 
 export const endpoints = {
     "baseUrl": "api",

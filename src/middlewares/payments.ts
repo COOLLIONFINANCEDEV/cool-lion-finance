@@ -1,7 +1,9 @@
 import { cinetpayConfig } from 'src/config';
 const axios = require('axios');
 
-
+/**
+ * Methode pour avoir un lien pour faire le paiement
+ */
 export const get_payment_url =  (data: any) => {
 
     // data = JSON.stringify({
@@ -54,7 +56,9 @@ export const get_payment_url =  (data: any) => {
     
 }
 
-
+/**
+ * Methode pour verifier le paiement
+ */
 export const verify_payment = (transaction_id:String) =>{
 
     const data = {
@@ -102,6 +106,9 @@ export const verify_payment = (transaction_id:String) =>{
 //       });
 // }
 
+/**
+ * Methode pour avoir un token d'acces
+ */
 export const get_token = () => {
     var config = {
         method: 'post',
@@ -122,7 +129,9 @@ export const get_token = () => {
 }
 
 
-
+/**
+ * Methode pour ajouter un contact 
+ */
 export const add_contact = (data:any) => {
 
     // const data =[
@@ -153,6 +162,9 @@ export const add_contact = (data:any) => {
       });
 }
 
+/**
+ * Methode avoir le solde du compte
+ */
 export const get_balance = (token:String)=>{
     var config = {
         method: 'get',
@@ -172,6 +184,12 @@ export const get_balance = (token:String)=>{
       });
 }
 
+/**
+ * Methode pour teransfert de l'argent
+ * @param token 
+ * @param transaction_id 
+ * @param data 
+ */
 export const money_transfer = (token:String, transaction_id: String, data:any) =>{
     var config = {
         method: 'get',
@@ -193,6 +211,12 @@ export const money_transfer = (token:String, transaction_id: String, data:any) =
 }
 
 
+/**
+ * Methode pour verfier le transfert
+ * @param token 
+ * @param transaction_id 
+ * @param data 
+ */
 export const check_transfer = (token:String, transaction_id: String, data:any) =>{
     var config = {
         method: 'get',

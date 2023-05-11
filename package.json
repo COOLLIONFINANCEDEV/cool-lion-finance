@@ -4,7 +4,7 @@
   "main": "dist/server.js",
   "license": "MIT",
   "bin" : {
-    "execute" : "index.js"
+    "execute" : "server.ts"
 } 
   "devDependencies": {
     "@types/axios": "^0.14.0",
